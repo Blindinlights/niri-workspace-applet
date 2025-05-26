@@ -1,5 +1,5 @@
-name := 'cosmic-applet-template'
-export APPID := 'com.example.CosmicAppletTemplate'
+name := 'niri-workspace-applet'
+export APPID := 'com.github.blindinlights.NiriWorkSpaceApplet'
 
 rootdir := ''
 prefix := '/usr'

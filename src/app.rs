@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use std::time::Duration;
-
 use cosmic::app::{Core, Task};
 use cosmic::applet::cosmic_panel_config::PanelAnchor;
-use cosmic::iced::{self, Alignment, Background, Border, Length, Limits, Subscription};
+use cosmic::iced::{Alignment, Background, Border, Length, Limits, Subscription};
 use cosmic::iced_widget::{button, column, row};
 use cosmic::widget::{autosize, container, horizontal_space, vertical_space};
 use cosmic::{Application, Element, Theme};
@@ -21,7 +19,7 @@ pub struct NiriWorkspaceApplet {
     focused: u64,
     socket: Socket,
 }
-
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum Message {
     WorkspaceUpdated(WorkspaceUpdate),
@@ -38,7 +36,7 @@ impl Application for NiriWorkspaceApplet {
 
     type Message = Message;
 
-    const APP_ID: &'static str = "com.example.CosmicAppletTemplate";
+    const APP_ID: &'static str = "com.github.blindinlights.NiriWorkSpaceApplet";
 
     fn core(&self) -> &Core {
         &self.core

@@ -1,11 +1,11 @@
 [Desktop Entry]
-Name=COSMIC Applet Template
-Exec=cosmic-applet-template %F
+Name=Niri Workspace applet
+Exec=niri-workspace-applet %F
 Terminal=false
 Type=Application
 StartupNotify=true
-Icon=com.example.CosmicAppletTemplate
-Categories=COSMIC;Utility;
+Icon=com.github.blindinlights.NiriWorkSpaceApplet
+Categories=COSMIC;Utility,Niri;
 Keywords=Folder;Manager;
 MimeType=inode/directory;
 NoDisplay=true

@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-use app::YourApp;
+use app::NiriWorkspaceApplet;
 /// The `app` module is used by convention to indicate the main component of our application.
 mod app;
 mod core;
+pub mod niri;
 
 /// The `cosmic::app::run()` function is the starting point of your application.
 /// It takes two arguments:
@@ -11,5 +12,6 @@ mod core;
 /// - `()` is the flags that your app needs to use before it starts.
 ///  If your app does not need any flags, you can pass in `()`.
 fn main() -> cosmic::iced::Result {
-    cosmic::applet::run::<YourApp>(())
+    env_logger::init();
+    cosmic::applet::run::<NiriWorkspaceApplet>(())
 }

@@ -5,7 +5,7 @@ use cosmic::iced::{
     futures::{SinkExt, Stream},
     Subscription,
 };
-use log::error;
+use log::{debug, error};
 use niri_ipc::{socket::Socket, Reply, Workspace};
 use tokio::{io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader}, net::{unix::{OwnedReadHalf, OwnedWriteHalf}, UnixStream}};
 
@@ -29,18 +29,20 @@ impl NiriSocketExt for Socket {
     }
 
     fn focus_worspace_up(&mut self) {
+        
         self.send(niri_ipc::Request::Action(
-            niri_ipc::Action::FocusWindowUp {},
+            niri_ipc::Action::FocusWorkspaceUp {},
         ))
         .inspect_err(|e| {
             error!("Failed to focus workspace up : {}", e);
         })
         .ok();
+        debug!("Focus up");
     }
 
     fn focus_worspace_down(&mut self) {
         self.send(niri_ipc::Request::Action(
-            niri_ipc::Action::FocusWindowDown {},
+            niri_ipc::Action::FocusWorkspaceDown {},
         ))
         .inspect_err(|e| {
             error!("Failed to focus workspace down : {}", e);

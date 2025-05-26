@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
+use std::time::{Duration, Instant};
+
 use cosmic::app::{Core, Task};
 use cosmic::applet::cosmic_panel_config::PanelAnchor;
+use cosmic::iced::event::listen_with;
+use cosmic::iced::mouse::{self, ScrollDelta};
 use cosmic::iced::{Alignment, Background, Border, Length, Limits, Subscription};
 use cosmic::iced_widget::{button, column, row};
 use cosmic::widget::{autosize, container, horizontal_space, vertical_space};
@@ -18,15 +22,13 @@ pub struct NiriWorkspaceApplet {
     workspaces: Vec<Workspace>,
     focused: u64,
     socket: Socket,
+    last_scroll: Instant,
 }
-#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum Message {
     WorkspaceUpdated(WorkspaceUpdate),
     FocusWorkspace(u64),
-    FocusWorkspaceDown,
-    FocusWorkspaceUp,
-    Ping,
+    MouseScroll(ScrollDelta),
 }
 
 impl Application for NiriWorkspaceApplet {
@@ -54,6 +56,7 @@ impl Application for NiriWorkspaceApplet {
             socket,
             workspaces,
             focused: 0,
+            last_scroll: Instant::now(),
         };
         debug!("App init");
         (app, Task::none())
@@ -173,20 +176,36 @@ impl Application for NiriWorkspaceApplet {
             Message::FocusWorkspace(idx) => {
                 self.socket.focus_worspace(idx);
             }
-            Message::FocusWorkspaceDown => {
-                self.socket.focus_worspace_down();
+            Message::MouseScroll(delta) => {
+                if self.last_scroll.elapsed() > Duration::from_millis(200) {
+                    self.last_scroll = Instant::now();
+                    match delta {
+                        ScrollDelta::Lines { x, y } | ScrollDelta::Pixels { x, y } => {
+                            debug!("scroll x:{} y:{}", x, y);
+                            if y > 0. {
+                                self.socket.focus_worspace_up();
+                            } else {
+                                self.socket.focus_worspace_down();
+                            }
+                        }
+                    }
+                }
             }
-            Message::FocusWorkspaceUp => {
-                self.socket.focus_worspace_up();
-            }
-            Message::Ping => {
-                debug!("Update Pong!!")
-            }
+            #[allow(unreachable_patterns)]
+            _ => unreachable!(),
         }
         Task::none()
     }
     fn subscription(&self) -> cosmic::iced::Subscription<Self::Message> {
-        Subscription::batch([niri::sub().map(Message::WorkspaceUpdated)])
+        Subscription::batch([
+            niri::sub().map(Message::WorkspaceUpdated),
+            listen_with(|e, _, _| match e {
+                cosmic::iced::Event::Mouse(mouse::Event::WheelScrolled { delta }) => {
+                    Some(Message::MouseScroll(delta))
+                }
+                _ => None,
+            }),
+        ])
     }
 
     fn style(&self) -> Option<cosmic::iced_runtime::Appearance> {

@@ -29,7 +29,7 @@ impl NiriSocketExt for Socket {
     }
 
     fn focus_worspace_up(&mut self) {
-        
+
         self.send(niri_ipc::Request::Action(
             niri_ipc::Action::FocusWorkspaceUp {},
         ))
@@ -125,7 +125,7 @@ pub fn worker() -> impl Stream<Item = WorkspaceUpdate> {
             NiriClient::connect().await.expect("Event loop :failed to connect to niri socket");
 
         let reply = niri_socket.event_stream().await.expect("");
-        
+
         if matches!(reply, Ok(niri_ipc::Response::Handled)) {
             while let Ok(event) = niri_socket.read_event().await {
                 match event {
